@@ -162,7 +162,9 @@ def getTraderLocsBySubtype(subtype):
 def getSubtypesMods(mod):
     con = connection()
     cursor = con.cursor()
-    cursor.execute("SELECT subtype, mods FROM items WHERE mods = ? group by subtype", mod)
+    print(mod)    
+    query = f"SELECT subtype, mods FROM items WHERE mods = '{mod}' group by subtype"
+    cursor.execute(query)
     return [_[0] for _ in cursor.fetchall()]
 
 def getCategory(category, subtype=None):

@@ -1,3 +1,5 @@
+# This is a minimal example of sqlalchemy and Tkinter
+
 import random 
 import tkinter as tk 
 from tkinter import * 
