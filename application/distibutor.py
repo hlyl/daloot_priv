@@ -92,6 +92,6 @@ def get_digits(string):
 def zeroAllItems(items, type):
     for item in dao.getDicts(dao.getItemsToZero([item["name"] for item in items], type)):
         item["nominal"] = 0
-        item["min"] = 0
+        item["min_val"] = 0
 
         dao.update(item)

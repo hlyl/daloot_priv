@@ -372,7 +372,7 @@ def getMinByType(type):
     con = connection()
     cursor = con.cursor()   
     cursor.execute(
-        "select SUM(min) \
+        "select SUM(min_val) \
         from items \
         where type = ?", type
     )
@@ -403,12 +403,13 @@ def updateRarity(itemName, rarity):
 
     conn = connection()
     cursor = conn.cursor()
+
     cursor.execute("UPDATE items SET rarity = ? WHERE name = ?", (rarity, itemName,))
     conn.commit()
 
 
 def update(values):
-    query = "UPDATE items SET nominal = " + str(values["nominal"]) + ", min= " + str(values["min"]) + ", \
+    query = "UPDATE items SET nominal = " + str(values["nominal"]) + ", min_val= " + str(values["min"]) + ", \
         restock= " + str(values["restock"]) + ", lifetime= " + str(values["lifetime"]) + ", subtype= '" + str(
         values["subtype"]) + "'" \
             + ", deloot= '" + str(values["deloot"]) + "', mods= '" + str(values["mod"]) + "',"  "trader_loc = " + str(values["trader"]) + " WHERE name = '" + str(
@@ -455,7 +456,7 @@ def updateMany(items):
     conn = connection()
     cursor = conn.cursor()
     cursor.fast_executemany = True
-    cursor.executemany("UPDATE items SET nominal = ?, min= ?, \
+    cursor.executemany("UPDATE items SET nominal = ?, min_val= ?, \
         restock= ?, lifetime= ?, rarity= ? WHERE name = ?;", items)
 
 
