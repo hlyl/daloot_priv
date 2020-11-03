@@ -1,17 +1,19 @@
-import categories
-import distibutor
-import windows
+from application import categories
+from application import distibutor
+from application import windows
 
+from application.db import init_db, session, engine
+from application.model import Item
 
-from db import init_db, session, engine
-from model import Item
 
 def setConnectionParams(username, password, p, dbname, host, odbcVersion):
     pass
 
+
 def connection():
     connection = engine.raw_connection()
     return connection
+
 
 con = connection()
 c = con.cursor()
@@ -19,12 +21,13 @@ c = con.cursor()
 sql = "select mods from items group by mods"
 c.execute(
     sql
-    )
+)
 con.commit()
 
-def getCoulumNames():
 
+def getCoulumNames():
     return Item.__table__.columns.keys()
+
 
 columns = ""
 lastQuery = "select * from items"
@@ -33,6 +36,7 @@ lastQuery = "select * from items"
 def setColumnNames():
     global columns
     columns = ", ".join(getCoulumNames())
+
 
 def getDicts(items):
     itemsListOfDicts = []
@@ -64,7 +68,8 @@ def insertItems(params, items):
 
     cursor.fast_executemany = True
     cursor.executemany(
-        "insert into items(" + params + ") values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "insert into items(" + params + ") values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+                                        "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         items)
     conn.commit()
 
@@ -75,7 +80,8 @@ def insertItem(parameters, item):
 
     try:
         cursor.execute(
-            "insert into items(" + parameters + ") values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "insert into items(" + parameters + ") values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+                                                "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             item)
         conn.commit()
         return 0
@@ -138,7 +144,8 @@ def getSubtypes():
     cursor.execute("SELECT subtype FROM items group by subtype")
     return [row[0] if row[0] is not None else "" for row in cursor.fetchall()]
 
-#!##############################################
+
+# !##############################################
 def getTraderLocs():
     con = connection()
     cursor = con.cursor()
@@ -147,25 +154,29 @@ def getTraderLocs():
     results = [row[0] if row[0] is not None else "" for row in raw_results]
     return sorted(results)
 
+
 def getTraderLocsBySubtype(subtype):
     con = connection()
     cursor = con.cursor()
     query = f"SELECT trader_loc FROM items WHERE subtype = '{subtype}' group by trader_loc"
-    #print("DEBUG - query", query)
+    # print("DEBUG - query", query)
     cursor.execute(query)
     raw_results = cursor.fetchall()
-    #print("DEBUG - raw_results", raw_results)
+    # print("DEBUG - raw_results", raw_results)
     results = [row[0] if row[0] is not None else "" for row in raw_results]
     return sorted(results)
-#!##############################################
+
+
+# !##############################################
 
 def getSubtypesMods(mod):
     con = connection()
     cursor = con.cursor()
-    print(mod)    
+    print(mod)
     query = f"SELECT subtype, mods FROM items WHERE mods = '{mod}' group by subtype"
     cursor.execute(query)
     return [_[0] for _ in cursor.fetchall()]
+
 
 def getCategory(category, subtype=None):
     global lastQuery
@@ -181,6 +192,7 @@ def getCategory(category, subtype=None):
     cursor = con.cursor()
     cursor.execute(lastQuery)
     return cursor.fetchall()
+
 
 # name, subtype, tradercat, buyprice, sellprice, rarity, nominal, traderexclude, mods
 def getSubtypeForTrader(subtype):
@@ -201,6 +213,7 @@ def getSubtypeForTrader(subtype):
         result[i] = list(result[i])
     return result
 
+
 def getItemDetailsByTraderLoc(subtype, trader_loc):
     query = f'SELECT name FROM items where trader_loc = {trader_loc} and subtype = "{subtype}"'
     con = connection()
@@ -208,6 +221,7 @@ def getItemDetailsByTraderLoc(subtype, trader_loc):
     cursor.execute(query)
     results = cursor.fetchall()
     return [row[0] for row in results]
+
 
 def getItemsByName(items):
     conn = connection()
@@ -370,7 +384,7 @@ def getNominalByUsage(usage):
 
 def getMinByType(type):
     con = connection()
-    cursor = con.cursor()   
+    cursor = con.cursor()
     cursor.execute(
         "select SUM(min_val) \
         from items \
@@ -412,8 +426,9 @@ def update(values):
     query = "UPDATE items SET nominal = " + str(values["nominal"]) + ", min_val= " + str(values["min"]) + ", \
         restock= " + str(values["restock"]) + ", lifetime= " + str(values["lifetime"]) + ", subtype= '" + str(
         values["subtype"]) + "'" \
-            + ", deloot= '" + str(values["deloot"]) + "', mods= '" + str(values["mod"]) + "',"  "trader_loc = " + str(values["trader"]) + " WHERE name = '" + str(
-        values["name"] + "'" )
+            + ", deloot= '" + str(values["deloot"]) + "', mods= '" + str(values["mod"]) + "',"  "trader_loc = " + str(
+        values["trader"]) + " WHERE name = '" + str(
+        values["name"] + "'")
 
     conn = connection()
     cursor = conn.cursor()
@@ -625,8 +640,8 @@ ADD COLUMN `buyprice` INT(11) NULL DEFAULT NULL AFTER `subtype`,\
 ADD COLUMN `sellprice` INT(11) NULL DEFAULT NULL AFTER `buyprice`, \
 ADD COLUMN `traderCat` VARCHAR(3) NULL DEFAULT NULL AFTER `sellprice`,\
 ADD COLUMN `traderExclude` TINYINT(1) UNSIGNED ZEROFILL NOT NULL DEFAULT '0' AFTER `traderCat`;"
-# TODO: DB update does not seem to work
-#ADD COLUMN `trader_loc` TINYINT(1) UNSIGNED ZEROFILL NOT NULL DEFAULT '0' AFTER `traderExclude`;"
+    # TODO: DB update does not seem to work
+    # ADD COLUMN `trader_loc` TINYINT(1) UNSIGNED ZEROFILL NOT NULL DEFAULT '0' AFTER `traderExclude`;"
 
     conn = connection()
     cursor = conn.cursor()
@@ -699,6 +714,6 @@ def loadDB(content):
     process.stdin.close()
     process.kill()
 
+
 def getOdbcVersion():
-    
-        return "8.0"
+    return "8.0"

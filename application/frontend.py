@@ -1,22 +1,20 @@
 from time import sleep
 from tkinter import *
 from tkinter import ttk
-
-import addItems
-import categories
-import connectionWindow
-import dao
-import distibutor
-import itemLinker
-import upgradeDB
-import windows
-import xmlParser
-import xmlWriter
-from assignSubTypes import TraderEditor
-from autocompleteCombobox import Combobox_Autocomplete
-from windows import dataPath
-from windows import getContent
-from windows import is_number
+from application import addItems
+from application import categories
+from application import connectionWindow
+from application import dao
+from application import distibutor
+from application import itemLinker
+from application import upgradeDB
+from application import windows
+from application import xmlParser
+from application import xmlWriter
+from application.assignSubTypes import TraderEditor
+from application.autocompleteCombobox import Combobox_Autocomplete
+from application.windows import getContent
+from application.windows import is_number
 
 itemTypes = ["gun", "ammo", "optic", "mag", "attachment"]
 
@@ -48,9 +46,7 @@ class Window(object):
         self.window = window
         self.checkForDatabase()
         self.window.wm_title("Loot Editor v0.98.6")
-        # self.window.wm_iconbitmap(dataPath + "/miniLogo.ico")
         self.window.protocol("WM_DELETE_WINDOW", self.on_close)
-
         self.changed = False
         self.availableMods = windows.getMods()
         if "removed" not in self.availableMods:
