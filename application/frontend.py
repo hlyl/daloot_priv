@@ -43,6 +43,7 @@ rarities5 = {
 
 class Window(object):
     def __init__(self, window):
+        #
         self.window = window
         self.checkForDatabase()
         self.window.wm_title("Loot Editor v0.98.6")
@@ -55,18 +56,17 @@ class Window(object):
         self.activatedFields = set()
         self.sorted = ""
         self.reverse = False
-
         self.totalNomDisplayed = StringVar()
         self.totalNomDisplayed.set(0)
+        #
+        self.__create_menu_bar()
+        self.__create_entry_bar()
+        self.__create_tree_view()
+        self.__create_side_bar()
+        self.__create_distribution_block()
+        self.__create_multiplier_block()
 
-        self.createMenuBar()
-        self.createEntryBar()
-        self.createTreeview()
-        self.createSideBar()
-        self.createDistibutionBlock()
-        self.createMultiplierBlock()
         windows.center(self.window)
-
         # Keybindings
         self.tree.bind("<ButtonRelease-1>", self.fillEntryBoxes)
         self.window.bind("<Return>", self.enterPress)
@@ -77,68 +77,69 @@ class Window(object):
 
         self.nomVars = []
         self.deltaNom = []
-        self.startNominals = []
-
-        self.createNominalInfo()
+        self.start_nominal = []
+        self.__create_nominal_info()
         self.viewCategroy()
 
-    def createMenuBar(self):
-        menubar = Menu(self.window)
-
-        filemenu = Menu(menubar, tearoff=0)
-        filemenu.add_command(label="Load types.xml...", command=self.loadTypesXML)
-        filemenu.add_command(label="Load Trader File...", command=self.loadTraderFile)
-        filemenu.add_command(label="Load Database...", command=self.loadDB)
-        filemenu.add_separator()
-        filemenu.add_command(label="Export types.xml...", command=self.saveXML)
-        filemenu.add_command(label="Save Database As...", command=self.saveDB)
-        filemenu.add_command(
+    def __create_menu_bar(self):
+        menu_bar = Menu(self.window)
+        # initializing file menu
+        file_menu = Menu(menu_bar, tearoff=0)
+        file_menu.add_command(label="Load types.xml...", command=self.loadTypesXML)
+        file_menu.add_command(label="Load Trader File...", command=self.loadTraderFile)
+        file_menu.add_command(label="Load Database...", command=self.loadDB)
+        file_menu.add_separator()
+        file_menu.add_command(label="Export types.xml...", command=self.saveXML)
+        file_menu.add_command(label="Save Database As...", command=self.saveDB)
+        file_menu.add_command(
             label="(Beta) Export Spawnabletypes...", command=self.exportSpawnable
         )
-        filemenu.add_separator()
-        filemenu.add_command(label="Exit", command=self.window.destroy)
-        menubar.add_cascade(label="File", menu=filemenu)
+        file_menu.add_separator()
+        file_menu.add_command(label="Exit", command=self.window.destroy)
 
-        databasemenu = Menu(menubar, tearoff=0)
-        databasemenu.add_command(label="Connect...", command=self.openConnectionWindow)
-        databasemenu.add_command(label="Upgrade Database", command=self.upgradeDB)
-        databasemenu.add_command(label="Detect Subtypes", command=self.detectSubtypes)
-        databasemenu.add_separator()
-        databasemenu.add_command(label="Add items...", command=self.openAddItems)
-        databasemenu.add_command(
+        # initializing database menu
+        database_menu = Menu(menu_bar, tearoff=0)
+        database_menu.add_command(label="Connect...", command=self.openConnectionWindow)
+        database_menu.add_command(label="Upgrade Database", command=self.upgradeDB)
+        database_menu.add_command(label="Detect Subtypes", command=self.detectSubtypes)
+        database_menu.add_separator()
+        database_menu.add_command(label="Add items...", command=self.openAddItems)
+        database_menu.add_command(
             label="Create item links...", command=self.openitemLinker
         )
-        databasemenu.add_command(
+        database_menu.add_command(
             label="Trader Editor...", command=self.openTraderEditor
         )
-        menubar.add_cascade(label="Database", menu=databasemenu)
 
-        self.modsmenu = Menu(menubar, tearoff=0)
+        # initializing mods menu
+        self.mods_menu = Menu(menu_bar, tearoff=0)
         self.modSelectionVars = []
-
-        self.modsmenu.add_command(label="Deselect All", command=self.deselectAllMods)
-        self.modsmenu.add_command(label="Select All", command=self.selectAllMods)
-        self.modsmenu.add_separator()
-
+        self.mods_menu.add_command(label="Deselect All", command=self.deselectAllMods)
+        self.mods_menu.add_command(label="Select All", command=self.selectAllMods)
+        self.mods_menu.add_separator()
         for mod in self.availableMods:
-            intVar = IntVar()
+            int_var = IntVar()
             if mod == "removed":
-                intVar.set(0)
+                int_var.set(0)
             else:
-                intVar.set(1)
-            intVar.trace("w", self.updateModSelection)
-            self.modSelectionVars.append(intVar)
-            self.modsmenu.add_checkbutton(label=mod, variable=intVar)
+                int_var.set(1)
+            int_var.trace("w", self.updateModSelection)
+            self.modSelectionVars.append(int_var)
+            self.mods_menu.add_checkbutton(label=mod, variable=int_var)
 
-        menubar.add_cascade(label="Mods In Use", menu=self.modsmenu)
+        # initializing help menu
+        help_menu = Menu(menu_bar, tearoff=0)
+        help_menu.add_command(label="visit the loot editor github for ")
 
-        helpmenu = Menu(menubar, tearoff=0)
-        helpmenu.add_command(label="visit the loot editor github for ")
-        menubar.add_cascade(label="Help", menu=helpmenu)
+        # adding menus to menu bar
+        menu_bar.add_cascade(label="File", menu=file_menu)
+        menu_bar.add_cascade(label="Database", menu=database_menu)
+        menu_bar.add_cascade(label="Mods In Use", menu=self.mods_menu)
+        menu_bar.add_cascade(label="Help", menu=help_menu)
 
-        self.window.config(menu=menubar)
+        self.window.config(menu=menu_bar)
 
-    def createEntryBar(self):
+    def __create_entry_bar(self):
         self.entryFrame = Frame(self.window)
         self.entryFrame.grid(row=0, column=0, sticky="nw")
 
@@ -239,8 +240,8 @@ class Window(object):
         self.modEntry.bind("<ButtonRelease-1>", self.addEditedVal)
         self.modEntry.val = self.mod_text
 
-        self.EFCheckboxe = Frame(self.entryFrame)
-        self.EFCheckboxe.grid(row=1, column=0, columnspan=2, sticky="w")
+        self.EFCheckbox = Frame(self.entryFrame)
+        self.EFCheckbox.grid(row=1, column=0, columnspan=2, sticky="w")
 
         #########################################################
         self.trader_text = StringVar()
@@ -249,13 +250,13 @@ class Window(object):
         self.traderEntry.bind("<FocusIn>", self.addEditedVal)
         self.traderEntry.val = self.trader_text
 
-        self.EFCheckboxe = Frame(self.entryFrame)
-        self.EFCheckboxe.grid(row=1, column=0, columnspan=2, sticky="w")
+        self.EFCheckbox = Frame(self.entryFrame)
+        self.EFCheckbox.grid(row=1, column=0, columnspan=2, sticky="w")
         ##########################################################
 
         self.deLoot = IntVar()
         self.deLootOption = Checkbutton(
-            self.EFCheckboxe, text="Dynamic Event", variable=self.deLoot
+            self.EFCheckbox, text="Dynamic Event", variable=self.deLoot
         )
         self.deLootOption.grid(row=0, column=0, sticky="w")
         self.deLootOption.bind(
@@ -265,7 +266,7 @@ class Window(object):
 
         self.cargo = IntVar()
         self.cargoOption = Checkbutton(
-            self.EFCheckboxe, text="Count in Cargo", variable=self.cargo
+            self.EFCheckbox, text="Count in Cargo", variable=self.cargo
         )
         self.cargoOption.grid(row=1, column=0, sticky="w")
         self.cargoOption.bind(
@@ -275,7 +276,7 @@ class Window(object):
 
         self.hoarder = IntVar()
         self.hoarderOption = Checkbutton(
-            self.EFCheckboxe, text="Count in Hoarder", variable=self.hoarder
+            self.EFCheckbox, text="Count in Hoarder", variable=self.hoarder
         )
         self.hoarderOption.grid(row=2, column=0, sticky="w")
         self.hoarderOption.bind(
@@ -285,7 +286,7 @@ class Window(object):
 
         self.map = IntVar()
         self.mapOption = Checkbutton(
-            self.EFCheckboxe, text="Count in Map", variable=self.map
+            self.EFCheckbox, text="Count in Map", variable=self.map
         )
         self.mapOption.grid(row=3, column=0, sticky="w")
         self.mapOption.bind(
@@ -295,7 +296,7 @@ class Window(object):
 
         self.player = IntVar()
         self.playerOption = Checkbutton(
-            self.EFCheckboxe, text="Count in Player", variable=self.player
+            self.EFCheckbox, text="Count in Player", variable=self.player
         )
         self.playerOption.grid(row=4, column=0, sticky="w")
         self.playerOption.bind(
@@ -311,7 +312,7 @@ class Window(object):
             row=4, column=0, pady=5
         )
 
-    def createTreeview(self):
+    def __create_tree_view(self):
         self.treeFrame = Frame(self.window)
         self.treeFrame.grid(row=0, column=1, sticky="nsew")
 
@@ -383,32 +384,32 @@ class Window(object):
         vert.config(command=self.tree.yview)
         hori.config(command=self.tree.xview)
 
-    def createSideBar(self):
+    def __create_side_bar(self):
         # todo get from backend
         self.choices = xmlParser.selection
 
         self.buttons = Frame(self.window)
         self.buttons.grid(row=0, column=2, sticky="n")
 
-        filter = LabelFrame(self.buttons, text="Filter")
-        filter.grid(row=1, column=0, pady=5)
+        filter_label = LabelFrame(self.buttons, text="Filter")
+        filter_label.grid(row=1, column=0, pady=5)
 
-        Label(filter, text="Type").grid(row=1, column=0, sticky="w")
-        Label(filter, text="Subtype").grid(row=2, column=0, sticky="w")
+        Label(filter_label, text="Type").grid(row=1, column=0, sticky="w")
+        Label(filter_label, text="Subtype").grid(row=2, column=0, sticky="w")
 
         self.typeSel = StringVar(window)
         self.typeSel.set("gun")
 
-        OptionMenu(filter, self.typeSel, *self.choices).grid(
+        OptionMenu(filter_label, self.typeSel, *self.choices).grid(
             row=1, column=1, sticky="w", padx=5
         )
 
         self.subtypeSel = Combobox_Autocomplete(
-            filter, dao.getSubtypes(), highlightthickness=1, width=15
+            filter_label, dao.getSubtypes(), highlightthickness=1, width=15
         )
         self.subtypeSel.grid(row=2, column=1, sticky="w", pady=5, padx=5)
 
-        buttons = Frame(filter)
+        buttons = Frame(filter_label)
         buttons.grid(row=4, columnspan=2)
 
         Button(buttons, text="Filter", width=12, command=self.viewCategroy).grid(pady=5)
@@ -419,7 +420,7 @@ class Window(object):
             self.buttons, text="search by name", width=12, command=self.searchByName
         ).grid(row=4)
 
-    def createDistibutionBlock(self):
+    def __create_distribution_block(self):
         self.distribution = LabelFrame(self.buttons, text="Rarity Distribution")
         self.distribution.grid(row=5, column=0, padx=20, pady=20)
 
@@ -458,7 +459,7 @@ class Window(object):
             self.distribution, text="Distribute", width=12, command=self.distribute
         ).grid(row=7, columnspan=2, pady=10)
 
-    def createMultiplierBlock(self):
+    def __create_multiplier_block(self):
         self.multiplierFrame = LabelFrame(self.buttons, text="Loot Multiplier")
         self.multiplierFrame.grid(row=6, column=0, padx=20, pady=20)
 
@@ -481,7 +482,7 @@ class Window(object):
             row=3
         )
 
-    def createNominalInfo(self):
+    def __create_nominal_info(self):
         self.infoFrame = Frame(self.window)
         self.infoFrame.grid(row=1, column=1, sticky="s,w,e")
 
@@ -491,31 +492,32 @@ class Window(object):
         Label(self.infoFrame, textvariable=self.totalNomDisplayed).grid(row=0, column=2)
         i = 3
 
-        for type in itemTypes:
+        for item_type in itemTypes:
             var = StringVar()
-            deltaStart = StringVar()
+            delta_start = StringVar()
 
-            self.startNominals.append(dao.getNominalByType(type))
-            var.set(dao.getNominalByType(type))
+            self.start_nominal.append(dao.getNominalByType(item_type))
+            var.set(dao.getNominalByType(item_type))
             self.nomVars.append(var)
-            deltaStart.set(0)
-            self.deltaNom.append(deltaStart)
+            delta_start.set(0)
+            self.deltaNom.append(delta_start)
 
-            Label(self.infoFrame, text=type.capitalize() + ":").grid(row=0, column=i)
+            Label(self.infoFrame, text=item_type.capitalize() + ":").grid(row=0, column=i)
             Label(self.infoFrame, textvariable=var).grid(row=0, column=i + 1)
             Label(self.infoFrame, text="/").grid(row=0, column=i + 2)
-            Label(self.infoFrame, textvariable=deltaStart).grid(row=0, column=i + 3)
+            Label(self.infoFrame, textvariable=delta_start).grid(row=0, column=i + 3)
 
             i += 4
 
-    def updateNominalInfo(self):
+    def __update_nominal_info(self):
         for i in range(len(self.nomVars)):
             nominal = dao.getNominalByType(itemTypes[i])
             self.nomVars[i].set(nominal)
             try:
-                self.deltaNom[i].set(nominal - self.startNominals[i])
+                self.deltaNom[i].set(nominal - self.start_nominal[i])
             except TypeError:
-                self.deltaNom[i].set(nominal)
+                pass
+                #self.deltaupdateNominalInfoNom[i].set(nominal)
 
     def viewCategroy(self):
         cat = self.typeSel.get()
@@ -577,7 +579,7 @@ class Window(object):
 
     def deleteSel(self):
         if windows.askUser(
-            "Delete Item", "Are you sure you want to delete selected Item?"
+                "Delete Item", "Are you sure you want to delete selected Item?"
         ):
             dao.deleteItem(self.getSelectedValues(self.tree.focus())["name"])
             self.updateDisplay(dao.reExecuteLastQuery())
@@ -631,13 +633,13 @@ class Window(object):
         intVar.set(1)
         intVar.trace("w", self.updateModSelection)
         self.modSelectionVars.append(intVar)
-        self.modsmenu.add_checkbutton(label=mod, variable=intVar)
+        self.mods_menu.add_checkbutton(label=mod, variable=intVar)
         self.availableMods.append(mod)
         self.selectedMods.append(mod)
 
     def clearModMenu(self):
         for mod in self.availableMods:
-            self.modsmenu.delete(3)
+            self.mods_menu.delete(3)
         self.availableMods = []
         self.modSelectionVars = []
 
@@ -742,7 +744,7 @@ class Window(object):
 
     def getSelectedValues(self, element):
         dict = self.tree.item(element)
-        #print("DEBUG dict", dict)
+        # print("DEBUG dict", dict)
         flags = dao.getFlags(dict["text"])
 
         val = {
@@ -791,7 +793,6 @@ class Window(object):
         for field in self.activatedFields:
             selected[field] = val[field]
 
-
         return selected
 
     def getEditedListBox(self, listBox, keys):
@@ -835,7 +836,7 @@ class Window(object):
                         row["traderLoc"],
                     ),
                 )
-        self.updateNominalInfo()
+        self.__update_nominal_info()
         self.totalNomDisplayed.set(displayedNom)
         self.updateDistribution()
         self.updateModMenu()
@@ -1007,9 +1008,9 @@ class Window(object):
 
     def detectSubtypes(self):
         if windows.askUser(
-            "Change Subtypes",
-            "Software will set default subtypes.\n"
-            "Subtypes of most items will be changed",
+                "Change Subtypes",
+                "Software will set default subtypes.\n"
+                "Subtypes of most items will be changed",
         ):
             upgradeDB.findSubTypes(dao.getAllItems())
 
