@@ -14,7 +14,7 @@ class Database(object):
         # database connection
         db_connection = sqlite3.connect(self.db_name)
         # sql statement
-        sql_create_usage = "INSERT INTO usages(name,nominal,mean,restock,life_time,usage,tire,rarity,gun_type," \
+        sql_create_usage = "INSERT INTO items(name,nominal,mean,restock,life_time,usage,tire,rarity,gun_type," \
                            "sub_type,mod,trader,dynamic_event,count_in_cargo,count_in_hoarder,count_in_map," \
                            "count_in_player) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) "
         # database cursor

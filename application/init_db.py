@@ -48,23 +48,23 @@ class InitDatabase(object):
                 """
         self.sql_create_items_table = """CREATE TABLE IF NOT EXISTS items (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        name VARCHAR(30) NOT NULL,
-                        nominal INTEGER NOT NULL,
-                        mean INTEGER NOT NULL,
-                        restock INTEGER NOT NULL,
-                        life_time INTEGER NOT NULL,
-                        usage VARCHAR(30) NOT NULL,
-                        tire VARCHAR(30) NOT NULL,
-                        rarity VARCHAR(30) NOT NULL,
-                        gun_type VARCHAR(30) NOT NULL,
-                        sub_type VARCHAR(30) NOT NULL,
-                        mod VARCHAR(30) NOT NULL,
-                        trader INTEGER NOT NULL,
-                        dynamic_event INTEGER NOT NULL,
-                        count_in_cargo INTEGER NOT NULL,
-                        count_in_hoarder INTEGER NOT NULL,
-                        count_in_map INTEGER NOT NULL,
-                        count_in_player INTEGER NOT NULL);
+                        name VARCHAR(30),
+                        nominal INTEGER,
+                        mean INTEGER,
+                        restock INTEGER,
+                        life_time INTEGER,
+                        usage VARCHAR(30),
+                        tire VARCHAR(30),
+                        rarity VARCHAR(30),
+                        gun_type VARCHAR(30),
+                        sub_type VARCHAR(30),
+                        mod VARCHAR(30),
+                        trader INTEGER,
+                        dynamic_event INTEGER,
+                        count_in_cargo INTEGER,
+                        count_in_hoarder INTEGER,
+                        count_in_map INTEGER,
+                        count_in_player INTEGER);
                         """
 
     def create_tables(self):
