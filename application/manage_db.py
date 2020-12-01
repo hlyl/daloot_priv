@@ -28,7 +28,7 @@ class Database(object):
         db_connection.commit()
         db_connection.close()
 
-    def update_item(self, item_id, item: Item):
+    def update_item(self, item: Item):
         db_connection = sqlite3.connect(self.db_name)
         # sql statement
         sql_create_update = "UPDATE items set name=?,nominal=?,mean=?,restock=?,life_time=?,usage=?,tire=?,rarity=?," \
@@ -42,7 +42,7 @@ class Database(object):
                                               item.get_type(), item.get_sub_type(), item.get_mod(), item.get_trader(),
                                               item.get_dynamic_event(), item.get_count_in_cargo(),
                                               item.get_count_in_hoarder(), item.get_count_in_map(),
-                                              item.get_count_in_player(), 1))
+                                              item.get_count_in_player(), item.get_item_id()))
         db_connection.commit()
         db_connection.close()
 
@@ -50,4 +50,13 @@ class Database(object):
         pass
 
     def all_items(self):
-        pass
+        db_connection = sqlite3.connect(self.db_name)
+        # sql statement
+        sql_select_items = "select * from items"
+        # database cursor
+        db_cursor = db_connection.cursor()
+        db_cursor.execute(sql_select_items)
+        items = db_cursor.fetchall()
+        db_connection.commit()
+        db_connection.close()
+        return items
