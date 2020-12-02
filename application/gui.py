@@ -4,10 +4,15 @@ from tkinter import ttk
 
 class GUI(object):
     def __init__(self, main_container: Tk):
+        #
         self.window = main_container
         self.window.wm_title("Loot Editor v0.98.6")
+        self.window.grid_rowconfigure(0, weight=1)
+        self.window.grid_columnconfigure(1, weight=1)
         self.menu_bar = Menu(self.window)
+        #
         self.__create_menu_bar()
+        self.__create_entry_frame()
 
     def __create_menu_bar(self):
         # file menus builder
@@ -50,6 +55,45 @@ class GUI(object):
 
         # configuring menu bar
         self.window.config(menu=self.menu_bar)
+
+    def __create_entry_frame(self):
+        self.entryFrameHolder = Frame(self.window)
+        self.entryFrameHolder.grid(row=0, column=0, sticky="nw")
+        self.entryFrame = Frame(self.entryFrameHolder)
+        self.entryFrame.grid(padx=8, pady=6)
+        # labels
+        Label(self.entryFrame, text="Name").grid(row=0, column=0, sticky="w", pady=5)
+        Label(self.entryFrame, text="Nominal").grid(row=1, column=0, sticky="w", pady=5)
+        Label(self.entryFrame, text="Min").grid(row=2, column=0, sticky="w", pady=5)
+        Label(self.entryFrame, text="Restock").grid(row=3, column=0, sticky="w", pady=5)
+        Label(self.entryFrame, text="Lifetime").grid(row=4, column=0, sticky="w", pady=5)
+        Label(self.entryFrame, text="Usages").grid(row=5, column=0, sticky="w", pady=5)
+        Label(self.entryFrame, text="Tiers").grid(row=6, column=0, sticky="w", pady=5)
+        Label(self.entryFrame, text="Type").grid(row=7, column=0, sticky="w", pady=5)
+        Label(self.entryFrame, text="Sub Type").grid(row=8, column=0, sticky="w", pady=5)
+        Label(self.entryFrame, text="Rarity").grid(row=9, column=0, sticky="w", pady=5)
+        Label(self.entryFrame, text="Mod").grid(row=10, column=0, sticky="w", pady=5)
+        Label(self.entryFrame, text="Trader").grid(row=11, column=0, sticky="w", pady=5)
+        # input variables
+        self.name = StringVar()
+        self.nominal = StringVar()
+        self.min = StringVar()
+        self.restock = StringVar()
+        self.lifetime = StringVar()
+        self.usages = StringVar()
+        self.tires = StringVar()
+        self.type = StringVar()
+        self.sub_type = StringVar()
+        self.rarity = StringVar()
+        self.mod = StringVar()
+        self.trader = StringVar()
+        # form fields
+        self.nameField = Entry(self.entryFrame, textvariable=self.name)
+        self.nameField.grid(row=0, column=1, sticky="w")
+        self.nominalField = Entry(self.entryFrame, textvariable=self.nominal)
+        self.nominalField.grid(row=1, column=1, sticky="w")
+        self.minField = Entry(self.entryFrame, textvariable=self.min)
+        self.minField.grid(row=2, column=1, sticky="w")
 
 
 window = Tk()
