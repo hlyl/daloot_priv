@@ -1,0 +1,28 @@
+<config>
+    <usages>
+        <usage value="item1"/>
+        <usage value="item2"/>
+        <usage value="item3"/>
+        <usage value="item4"/>
+    </usages>
+    <tires>
+        <tire value="Tire 1"/>
+        <tire value="Tire 2"/>
+    </tires>
+    <types>
+        <type value="Type 1"/>
+        <type value="Type 2"/>
+    </types>
+    <sub_types>
+        <sub_type value="Sub Type 1"/>
+        <sub_type value="Sub Type 2"/>
+    </sub_types>
+    <mods>
+        <mod value="Mod 1"/>
+        <mod value="Mod 2"/>
+    </mods>
+    <rairties>
+        <rarity value="Rarity 1"/>
+        <rarity value="Rarity 2"/>
+    </rairties>
+</config>
