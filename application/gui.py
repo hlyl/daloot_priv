@@ -186,6 +186,7 @@ class GUI(object):
         Label(self.filterFrame, text="Subtype").grid(row=2, column=0, sticky="w")
 
         self.type_for_filter = StringVar()
+        self.type_for_filter.set("all")
         OptionMenu(self.filterFrame, self.type_for_filter, *self.config.get_types()). \
             grid(row=1, column=1, sticky="w", padx=5)
         self.sub_type_combo_for_filter = Combobox_Autocomplete(self.filterFrame, self.config.get_sub_types(),
@@ -208,7 +209,13 @@ class GUI(object):
             self.tree.insert("", "end", text=i[0], value=i[1:13])
 
     def __filter_items(self):
-        sub_type = self.sub_type_combo_for_filter.get() if self.sub_type_combo_for_filter.get != "" else None
+        if self.type_for_filter.get() == "all":
+            self.__populate_items(self.database.all_items())
+        else:
+            if self.sub_type_combo_for_filter.get() != "":
+                sub_type = self.sub_type_combo_for_filter.get()
+            else:
+                sub_type = None
         item_type = self.type_for_filter.get()
         self.__populate_items(self.database.filter_items(item_type, sub_type))
 
