@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 from application import Config
+from application import Database
 
 from application.autocompleteCombobox import Combobox_Autocomplete
 
@@ -9,6 +10,7 @@ class GUI(object):
     def __init__(self, main_container: Tk):
         #
         self.config = Config('config.xml')
+        self.database = Database("test_scripts/test_db/test_2.db")
         #
         self.window = main_container
         self.window.wm_title("Loot Editor v0.98.6")
@@ -19,6 +21,7 @@ class GUI(object):
         self.__create_menu_bar()
         self.__create_entry_frame()
         self.__create_tree_view()
+        self.__populate_items()
 
     def __create_menu_bar(self):
         # file menus builder
@@ -148,51 +151,46 @@ class GUI(object):
     def __create_tree_view(self):
         self.treeFrame = Frame(self.window)
         self.treeFrame.grid(row=0, column=1, sticky="nsew")
+
         self.treeFrame.grid_rowconfigure(0, weight=1)
         self.treeFrame.grid_columnconfigure(0, weight=1)
-        self
-        columns = (
-            "nominal",
-            "min",
-            "restock",
-            "lifetime",
-            "type",
-            "subtype",
-            "usage",
-            "tier",
-            "Dyn. Event",
-            "rarity",
-            "mod",
-            "trader",
-        )
-        self.tree = ttk.Treeview(self.treeFrame, columns=columns, height=40)
-        for col in columns:
-            self.tree.heading(
-                col,
-                text=col,
-                command=lambda _col=col: self.treeview_sort_column(
-                    self.tree, _col, False
-                ),
-            )
+        self.column_info = self.config.get_tree_heading()
+        self.tree = ttk.Treeview(self.treeFrame, columns=self.column_info[0], height=40)
+        for col in self.column_info[1]:
+            self.tree.heading(col[2], text=col[0], command=lambda _col=col[0]:
+            self.treeview_sort_column(self.tree, _col, False), )
+            self.tree.column(col[2], width=col[1], stretch=0)
 
         self.tree.grid(row=0, column=0, sticky="nsew")
-        self.treeview = self.tree
+        self.treeView = self.tree
 
-        vert = ttk.Scrollbar(self.treeFrame, orient=VERTICAL)
-        hori = ttk.Scrollbar(self.treeFrame, orient=HORIZONTAL)
+        vertical = ttk.Scrollbar(self.treeFrame, orient=VERTICAL)
+        horizontal = ttk.Scrollbar(self.treeFrame, orient=HORIZONTAL)
 
-        vert.grid(row=0, column=1, sticky="ns")
-        hori.grid(row=1, column=0, sticky="we")
-        self.tree.config(yscrollcommand=vert.set)
-        self.tree.config(xscrollcommand=hori.set)
-        vert.config(command=self.tree.yview)
-        hori.config(command=self.tree.xview)
+        vertical.grid(row=0, column=1, sticky="ns")
+        horizontal.grid(row=1, column=0, sticky="we")
+        self.tree.config(yscrollcommand=vertical.set)
+        self.tree.config(xscrollcommand=horizontal.set)
+        vertical.config(command=self.tree.yview)
+        horizontal.config(command=self.tree.xview)
+        self.tree.insert("", "end", text="Name", values=(40))
+        self.tree.insert("", "end", text="Name", values=(80))
+
+    def __create_side_bar(self):
+        pass
 
     def update_item(self):
         pass
 
     def delete_item(self):
         pass
+
+    def __populate_items(self):
+        if self.tree.get_children() != ():
+            self.tree.delete(*self.tree.get_children())
+        items = self.database.all_items()
+        for i in items:
+            self.tree.insert("", "end", text=i[0], value=i[1:13])
 
 
 window = Tk()

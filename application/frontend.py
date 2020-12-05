@@ -815,6 +815,7 @@ class Window(object):
         self.clearTree()
         for row in rows:
             row = self.dictFromRow(row)
+            print(row['name'])
             if row["mod"] in self.selectedMods:
                 displayedNom += row["nominal"]
                 self.tree.insert(

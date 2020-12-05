@@ -23,11 +23,12 @@ item.set_count_in_map(1)
 item.set_count_in_player(1)
 item.set_item_id(1)
 
-# database.create_item(item)
+database.create_item(item)
 # database.delete_item(2)
 # database.delete_items()
-# items = database.all_items()
-item = database.get_item(1)
-print(item[6])
+items = database.all_items()
+
+#item = database.get_item(1)
+print(items)
 '''for item in items:
     print(item)'''
