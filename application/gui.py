@@ -1,11 +1,14 @@
 from tkinter import *
 from tkinter import ttk
+from application import Config
 
 from application.autocompleteCombobox import Combobox_Autocomplete
 
 
 class GUI(object):
     def __init__(self, main_container: Tk):
+        #
+        self.config = Config('config.xml')
         #
         self.window = main_container
         self.window.wm_title("Loot Editor v0.98.6")
@@ -15,6 +18,7 @@ class GUI(object):
         #
         self.__create_menu_bar()
         self.__create_entry_frame()
+        self.__create_tree_view()
 
     def __create_menu_bar(self):
         # file menus builder
@@ -89,6 +93,11 @@ class GUI(object):
         self.rarity = StringVar()
         self.mod = StringVar()
         self.trader = StringVar()
+        self.dynamic_event = IntVar()
+        self.count_in_cargo = IntVar()
+        self.count_in_hoarder = IntVar()
+        self.count_in_map = IntVar()
+        self.count_in_player = IntVar()
         # form fields
         self.nameField = Entry(self.entryFrame, textvariable=self.name)
         self.nameField.grid(row=0, column=1, sticky="w")
@@ -114,6 +123,76 @@ class GUI(object):
         self.modField.grid(row=10, column=1, sticky="w", pady=5)
         self.traderField = Entry(self.entryFrame, textvariable=self.trader)
         self.traderField.grid(row=11, column=1, sticky="w")
+        # check boxes frame
+        self.checkBoxFrame = Frame(self.entryFrameHolder)
+        self.checkBoxFrame.grid(row=1, column=0, columnspan=2, sticky="w")
+        self.dynamic_event_check = Checkbutton(self.checkBoxFrame, text="Dynamic Event", variable=self.dynamic_event)
+        self.dynamic_event_check.grid(row=0, column=0, sticky="w")
+        self.count_in_cargo_check = Checkbutton(self.checkBoxFrame, text="Count in Cargo", variable=self.count_in_cargo)
+        self.count_in_cargo_check.grid(row=1, column=0, sticky="w")
+        self.count_in_hoarder_check = Checkbutton(self.checkBoxFrame, text="Count in Hoarder",
+                                                  variable=self.count_in_hoarder)
+        self.count_in_hoarder_check.grid(row=2, column=0, sticky="w")
+        self.count_in_map_check = Checkbutton(self.checkBoxFrame, text="Count in Map", variable=self.count_in_map)
+        self.count_in_map_check.grid(row=3, column=0, sticky="w")
+        self.count_in_player_check = Checkbutton(self.checkBoxFrame, text="Count in Player",
+                                                 variable=self.count_in_player)
+        self.count_in_player_check.grid(row=4, column=0, sticky="w")
+
+        Button(self.checkBoxFrame, text="Update", width=8, command=self.update_item()). \
+            grid(row=5, column=0, pady=5, sticky="w")
+
+        Button(self.checkBoxFrame, text="Delete", width=8, command=self.delete_item()). \
+            grid(row=5, column=1, pady=5, sticky="w")
+
+    def __create_tree_view(self):
+        self.treeFrame = Frame(self.window)
+        self.treeFrame.grid(row=0, column=1, sticky="nsew")
+        self.treeFrame.grid_rowconfigure(0, weight=1)
+        self.treeFrame.grid_columnconfigure(0, weight=1)
+        self
+        columns = (
+            "nominal",
+            "min",
+            "restock",
+            "lifetime",
+            "type",
+            "subtype",
+            "usage",
+            "tier",
+            "Dyn. Event",
+            "rarity",
+            "mod",
+            "trader",
+        )
+        self.tree = ttk.Treeview(self.treeFrame, columns=columns, height=40)
+        for col in columns:
+            self.tree.heading(
+                col,
+                text=col,
+                command=lambda _col=col: self.treeview_sort_column(
+                    self.tree, _col, False
+                ),
+            )
+
+        self.tree.grid(row=0, column=0, sticky="nsew")
+        self.treeview = self.tree
+
+        vert = ttk.Scrollbar(self.treeFrame, orient=VERTICAL)
+        hori = ttk.Scrollbar(self.treeFrame, orient=HORIZONTAL)
+
+        vert.grid(row=0, column=1, sticky="ns")
+        hori.grid(row=1, column=0, sticky="we")
+        self.tree.config(yscrollcommand=vert.set)
+        self.tree.config(xscrollcommand=hori.set)
+        vert.config(command=self.tree.yview)
+        hori.config(command=self.tree.xview)
+
+    def update_item(self):
+        pass
+
+    def delete_item(self):
+        pass
 
 
 window = Tk()

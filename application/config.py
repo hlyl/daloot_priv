@@ -40,3 +40,13 @@ class Config(object):
         for i in rarity_list:
             rarities.append(i.attributes['value'].value)
         return rarities
+
+    def get_tree_heading(self):
+        column_list = self.config_file.getElementsByTagName("node")
+        columns_info = list()
+        columns = list()
+        for i in column_list:
+            columns_info.append([i.attributes['name'].value, i.attributes['width'].value,
+                                 i.attributes['col_id'].value, i.attributes['stretch'].value])
+            columns.append(i.attributes['name'].value)
+        return columns, columns_info

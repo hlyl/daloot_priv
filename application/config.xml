@@ -8,6 +8,7 @@
     <tires>
         <tire value="Tire 1"/>
         <tire value="Tire 2"/>
+        <tire value="Tire 3"/>
     </tires>
     <types>
         <type value="Type 1"/>
@@ -25,4 +26,14 @@
         <rarity value="Rarity 1"/>
         <rarity value="Rarity 2"/>
     </rairties>
+    <tree>
+        <node name="Name" width ="80" col_id="#0" stretch="YES"/>
+        <node name="Nominal" width ="80" col_id="#1" stretch="YES"/>
+        <node name="Min" width="80" col_id="#2" stretch="YES"/>
+        <node name="Restock" width="80" col_id="#3" stretch="YES"/>
+        <node name="Lifetime" width="80" col_id="#4" stretch="YES"/>
+        <node name="Type" width="80" col_id="#5" stretch="YES"/>
+        <node name="Sub Type" width="80" col_id="#6" stretch="YES"/>
+        <node name="Rarity" width="80" col_id="#7" stretch="YES"/>
+    </tree>
 </config>
