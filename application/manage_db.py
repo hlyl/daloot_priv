@@ -82,3 +82,17 @@ class Database(object):
         db_cursor.execute(sql_delete_items)
         db_connection.commit()
         db_connection.close()
+
+    def filter_items(self, item_type, item_sub_type=None):
+        db_connection = sqlite3.connect(self.db_name)
+        db_cursor = db_connection.cursor()
+        if item_sub_type is not None:
+            sql_filter_items = "select * from items where gun_type=? AND sub_type=?"
+            db_cursor.execute(sql_filter_items, (item_type, item_sub_type))
+        else:
+            sql_filter_items = "select * from items where gun_type=?"
+            db_cursor.execute(sql_filter_items, (item_type,))
+        items = db_cursor.fetchall()
+        db_connection.commit()
+        db_connection.close()
+        return items

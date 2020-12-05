@@ -21,7 +21,8 @@ class GUI(object):
         self.__create_menu_bar()
         self.__create_entry_frame()
         self.__create_tree_view()
-        self.__populate_items()
+        self.__create_side_bar()
+        self.__populate_items(self.database.all_items())
 
     def __create_menu_bar(self):
         # file menus builder
@@ -173,11 +174,26 @@ class GUI(object):
         self.tree.config(xscrollcommand=horizontal.set)
         vertical.config(command=self.tree.yview)
         horizontal.config(command=self.tree.xview)
-        self.tree.insert("", "end", text="Name", values=(40))
-        self.tree.insert("", "end", text="Name", values=(80))
 
     def __create_side_bar(self):
-        pass
+        self.filterFrameHolder = Frame(self.window)
+        self.filterFrameHolder.grid(row=0, column=2, sticky="n")
+
+        self.filterFrame = LabelFrame(self.filterFrameHolder, text="Filter")
+        self.filterFrame.grid(row=1, column=0, pady=5)
+
+        Label(self.filterFrame, text="Type").grid(row=1, column=0, sticky="w")
+        Label(self.filterFrame, text="Subtype").grid(row=2, column=0, sticky="w")
+
+        self.type_for_filter = StringVar()
+        OptionMenu(self.filterFrame, self.type_for_filter, *self.config.get_types()). \
+            grid(row=1, column=1, sticky="w", padx=5)
+        self.sub_type_combo_for_filter = Combobox_Autocomplete(self.filterFrame, self.config.get_sub_types(),
+                                                               highlightthickness=1, width=15)
+        self.sub_type_combo_for_filter.grid(row=2, column=1, sticky="w", pady=5, padx=5)
+
+        Button(self.filterFrame, text="Filter", width=12, command=self.__filter_items).grid(columnspan=2, pady=5,
+                                                                                            padx=10, sticky='nesw')
 
     def update_item(self):
         pass
@@ -185,12 +201,16 @@ class GUI(object):
     def delete_item(self):
         pass
 
-    def __populate_items(self):
+    def __populate_items(self, items):
         if self.tree.get_children() != ():
             self.tree.delete(*self.tree.get_children())
-        items = self.database.all_items()
         for i in items:
             self.tree.insert("", "end", text=i[0], value=i[1:13])
+
+    def __filter_items(self):
+        sub_type = self.sub_type_combo_for_filter.get() if self.sub_type_combo_for_filter.get != "" else None
+        item_type = self.type_for_filter.get()
+        self.__populate_items(self.database.filter_items(item_type, sub_type))
 
 
 window = Tk()

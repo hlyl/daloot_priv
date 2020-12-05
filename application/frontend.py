@@ -387,6 +387,7 @@ class Window(object):
     def __create_side_bar(self):
         # todo get from backend
         self.choices = xmlParser.selection
+        print(self.choices)
 
         self.buttons = Frame(self.window)
         self.buttons.grid(row=0, column=2, sticky="n")

@@ -20,6 +20,14 @@ class Config(object):
 
         return types
 
+    def get_sub_types(self):
+        type_list = self.config_file.getElementsByTagName('sub_type')
+        types = list()
+        for i in type_list:
+            types.append(i.attributes['value'].value)
+
+        return types
+
     def get_tires(self):
         tire_list = self.config_file.getElementsByTagName('tire')
         tires = list()
