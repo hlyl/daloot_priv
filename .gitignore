@@ -6,7 +6,7 @@ compiled/
 testCode/
 logo/
 data/
-images/
 test/
 data/dayzitems.sql
 *.db
+.cache

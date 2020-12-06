@@ -42,6 +42,18 @@ For compiling an executeable the following is needed
 
 - pyinstaller
 
+## Testing the module
+
+In the root dir run
+
+```bash
+pytest
+```
+This should return
+
+![connection Window](images/pytest.png)
+
+
 ## First Startup
 On startup, you will see the connection window
 
