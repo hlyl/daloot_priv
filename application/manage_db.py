@@ -78,10 +78,10 @@ class Database(object):
         db_connection = sqlite3.connect(self.db_name)
         db_cursor = db_connection.cursor()
         if item_sub_type is not None:
-            sql_filter_items = "select * from items where gun_type=? AND sub_type=?"
+            sql_filter_items = "select * from items where item_type=? AND sub_type=?"
             db_cursor.execute(sql_filter_items, (item_type, item_sub_type))
         else:
-            sql_filter_items = "select * from items where gun_type=?"
+            sql_filter_items = "select * from items where item_type=?"
             db_cursor.execute(sql_filter_items, (item_type,))
         items = db_cursor.fetchall()
         db_connection.commit()
