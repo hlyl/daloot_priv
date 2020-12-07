@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from application import Config
 from application import Database
-
+from application import Item
 from application.autocompleteCombobox import Combobox_Autocomplete
 
 
@@ -10,7 +10,7 @@ class GUI(object):
     def __init__(self, main_container: Tk):
         #
         self.config = Config('config.xml')
-        self.database = Database("test_scripts/test_db/test_2.db")
+        self.database = Database("test_scripts/test_db/test_3.db")
         #
         self.window = main_container
         self.window.wm_title("Loot Editor v0.98.6")
@@ -22,7 +22,7 @@ class GUI(object):
         self.__create_entry_frame()
         self.__create_tree_view()
         self.__create_side_bar()
-        self.__populate_items(self.database.all_items())
+        self.__populate_items()
         #
         self.tree.bind("<ButtonRelease-1>", self.__fill_entry_frame)
 
@@ -87,6 +87,7 @@ class GUI(object):
         Label(self.entryFrame, text="Mod").grid(row=10, column=0, sticky="w", pady=5)
         Label(self.entryFrame, text="Trader").grid(row=11, column=0, sticky="w", pady=5)
         # input variables
+        self.id = IntVar()
         self.name = StringVar()
         self.nominal = StringVar()
         self.min = StringVar()
@@ -145,10 +146,10 @@ class GUI(object):
                                                  variable=self.count_in_player)
         self.count_in_player_check.grid(row=4, column=0, sticky="w")
 
-        Button(self.checkBoxFrame, text="Update", width=8, command=self.update_item()). \
+        Button(self.checkBoxFrame, text="Update", width=8, command=self.__update_item). \
             grid(row=5, column=0, pady=5, sticky="w")
 
-        Button(self.checkBoxFrame, text="Delete", width=8, command=self.delete_item()). \
+        Button(self.checkBoxFrame, text="Delete", width=8, command=self.__delete_item). \
             grid(row=5, column=1, pady=5, sticky="w")
 
     def __create_tree_view(self):
@@ -198,13 +199,21 @@ class GUI(object):
         Button(self.filterFrame, text="Filter", width=12, command=self.__filter_items).grid(columnspan=2, pady=5,
                                                                                             padx=10, sticky='nesw')
 
-    def update_item(self):
-        pass
+    def __update_item(self):
+        updated_item = Item()
+        updated_item.id = self.id.get()
+        updated_item.name = self.name.get()
+        updated_item.nominal = self.nominal.get()
+        self.database.update_item(updated_item)
+        self.__populate_items()
 
-    def delete_item(self):
-        pass
+    def __delete_item(self):
+        self.database.delete_item(self.id.get())
+        self.__populate_items()
 
-    def __populate_items(self, items):
+    def __populate_items(self, items=None):
+        if items is None:
+            items = self.database.all_items()
         if self.tree.get_children() != ():
             self.tree.delete(*self.tree.get_children())
         for i in items:
@@ -226,8 +235,20 @@ class GUI(object):
     def __fill_entry_frame(self, event):
         tree_row = self.tree.item(self.tree.focus())
         id = tree_row['text']
-        values = tree_row['values']
-        print(id, values)
+        item = self.database.get_item(id)
+        self.id.set(id)
+        self.name.set(item.name)
+        self.nominal.set(item.nominal)
+        self.min.set(item.min)
+        self.lifetime.set(item.lifetime)
+        self.restock.set(item.restock)
+        self.mod.set(item.mod)
+        self.trader.set(item.trader)
+        self.dynamic_event.set(item.dynamic_event)
+        self.count_in_hoarder.set(item.count_in_hoarder)
+        self.count_in_cargo.set(item.count_in_cargo)
+        self.count_in_map.set(item.count_in_map)
+        self.count_in_player.set(item.count_in_player)
 
 
 window = Tk()
