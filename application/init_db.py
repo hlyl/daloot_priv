@@ -1,9 +1,34 @@
-import sqlite3
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
 
 
 class InitDatabase(object):
+    meta = MetaData()
+    items = Table(
+        'items', meta,
+        Column('id', Integer, primary_key=True),
+        Column('name', String),
+        Column('nominal', Integer),
+        Column('min', Integer),
+        Column('restock', Integer),
+        Column('lifetime', Integer),
+        Column('usage', String),
+        Column('tire', String),
+        Column('rarity', String),
+        Column('item_type', String),
+        Column('sub_type', String),
+        Column('mod', String),
+        Column('trader', Integer),
+        Column('dynamic_event', Integer),
+        Column('count_in_hoarder', Integer),
+        Column('count_in_cargo', Integer),
+        Column('count_in_player', Integer),
+        Column('count_in_map', Integer),
+    )
+
     def __init__(self, db_name):
-        self.db_name = db_name
+        engine = create_engine(f"sqlite:///{db_name}")
+        self.meta.create_all(engine)
+        '''self.db_name = db_name
         self.sql_create_usages_table = """CREATE TABLE IF NOT EXISTS usages (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             usage VARCHAR(30) NOT NULL);"""
@@ -45,8 +70,8 @@ class InitDatabase(object):
                 FOREIGN KEY (rarity) REFERENCES rarities(id),
                 FOREIGN KEY (gun_type) REFERENCES types(id),
                 FOREIGN KEY (sub_type) REFERENCES sub_types(id));
-                """
-        self.sql_create_items_table = """CREATE TABLE IF NOT EXISTS items (
+                """'''
+        '''self.sql_create_items_table = """CREATE TABLE IF NOT EXISTS items (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         name VARCHAR(30),
                         nominal INTEGER,
@@ -65,9 +90,9 @@ class InitDatabase(object):
                         count_in_hoarder INTEGER,
                         count_in_map INTEGER,
                         count_in_player INTEGER);
-                        """
+                        """'''
 
-    def create_tables(self):
+    '''def create_tables(self):
         # database connection
         db_connection = sqlite3.connect(self.db_name)
         # cursor
@@ -82,10 +107,10 @@ class InitDatabase(object):
         # committing changes to the database
         db_connection.commit()
         # closing database connection
-        db_connection.close()
+        db_connection.close()'''
 
     def create_table(self):
-        db_connection = sqlite3.connect(self.db_name)
+        '''db_connection = sqlite3.connect(self.db_name)
         # cursor
         db_cursor = db_connection.cursor()
         # executing sql statements for creating tables items table
@@ -93,4 +118,4 @@ class InitDatabase(object):
         # committing changes to the database
         db_connection.commit()
         # closing database connection
-        db_connection.close()
+        db_connection.close()'''

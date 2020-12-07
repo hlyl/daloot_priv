@@ -1,14 +1,25 @@
 import sqlite3
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
 from application import Item
 
 
 class Database(object):
     def __init__(self, db_name):
         self.db_name = db_name
+        engine = create_engine(f"sqlite:///{db_name}")
+        session_maker = sessionmaker()
+        session_maker.configure(bind=engine)
+        self.session = session_maker()
 
     '''
     CRUD Operations related to items
     '''
+
+    def add_item(self, item: Item):
+        self.session.add(item)
+        self.session.commit()
 
     # create item
     def create_item(self, item: Item):
