@@ -23,6 +23,8 @@ class GUI(object):
         self.__create_tree_view()
         self.__create_side_bar()
         self.__populate_items(self.database.all_items())
+        #
+        self.tree.bind("<ButtonRelease-1>", self.__fill_entry_frame)
 
     def __create_menu_bar(self):
         # file menus builder
@@ -209,15 +211,23 @@ class GUI(object):
             self.tree.insert("", "end", text=i[0], value=i[1:13])
 
     def __filter_items(self):
-        if self.type_for_filter.get() == "all":
+        item_type = self.type_for_filter.get()
+        if item_type == "all":
             self.__populate_items(self.database.all_items())
         else:
             if self.sub_type_combo_for_filter.get() != "":
                 sub_type = self.sub_type_combo_for_filter.get()
             else:
                 sub_type = None
-        item_type = self.type_for_filter.get()
-        self.__populate_items(self.database.filter_items(item_type, sub_type))
+            self.__populate_items(self.database.filter_items(item_type, sub_type))
+        self.name.set("Test")
+        print(item_type)
+
+    def __fill_entry_frame(self, event):
+        tree_row = self.tree.item(self.tree.focus())
+        id = tree_row['text']
+        values = tree_row['values']
+        print(id, values)
 
 
 window = Tk()

@@ -4,19 +4,19 @@ from application import Database
 from application import Item
 from application import InitDatabase
 
-DATABASE='test.db'
+DATABASE = 'test.db'
 
 @pytest.fixture(scope='function')
 def setup_db():
     database = InitDatabase(DATABASE)
     database.create_table()
 
-def test_database_setters(setup_db):
 
+def test_database_setters(setup_db):
     database = Database(DATABASE)
     # create item
     item = Item()
-    
+
     item.set_name("Item_1")
     item.set_mean(12)
     item.set_nominal(9)
@@ -41,5 +41,5 @@ def test_database_setters(setup_db):
     # database.delete_items()
     items = database.all_items()
     print(items)
-    assert items[0] == (1, 'Item_1', 9, 12, 12, 1212, 'Test_Usage', 'Tire_1', 'Very_rare', 'type2', 'Sub Type', 'Mod', 1, 1, 1, 1, 1, 1)
-
+    assert items[0] == (
+    1, 'Item_1', 9, 12, 12, 1212, 'Test_Usage', 'Tire_1', 'Very_rare', 'type2', 'Sub Type', 'Mod', 1, 1, 1, 1, 1, 1)
