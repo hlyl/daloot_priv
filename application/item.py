@@ -25,7 +25,7 @@ class Item(Base):
     count_in_map = Column(Integer)
     count_in_player = Column(Integer)
 
-    def __init__(self, name, nominal, min_val, restock, lifetime, usage, tire, rarity, item_type, sub_type, mod, trader,
+    """def __init__(self, name, nominal, min_val, restock, lifetime, usage, tire, rarity, item_type, sub_type, mod, trader,
                  dynamic_event, count_in_hoarder, count_in_cargo, count_in_player, count_in_map):
         self.name = name
         self.nominal = nominal
@@ -44,3 +44,4 @@ class Item(Base):
         self.count_in_cargo = count_in_cargo
         self.count_in_player = count_in_player
         self.count_in_map = count_in_map
+"""

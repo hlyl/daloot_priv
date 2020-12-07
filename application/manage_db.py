@@ -23,8 +23,8 @@ class Database(object):
         self.session.commit()
 
     # update item
-    def update_item(self, item: Item):
-        db_connection = sqlite3.connect(self.db_name)
+    def update_item(self, updated_item: Item):
+        """db_connection = sqlite3.connect(self.db_name)
         sql_create_update = "UPDATE items set name=?,nominal=?,mean=?,restock=?,life_time=?,usage=?,tire=?,rarity=?," \
                             "gun_type=?,sub_type=?,mod=?,trader=?,dynamic_event=?,count_in_cargo=?,count_in_hoarder=?," \
                             "count_in_map=?,count_in_player=? WHERE id=?"
@@ -37,7 +37,22 @@ class Database(object):
                                               item.get_count_in_hoarder(), item.get_count_in_map(),
                                               item.get_count_in_player(), item.get_item_id()))
         db_connection.commit()
-        db_connection.close()
+        db_connection.close()"""
+        item = self.session.query(Item).get(updated_item.id)
+        item.name = updated_item.name
+        item.nominal = updated_item.nominal
+        item.min = updated_item.min
+        item.restock = updated_item.restock
+        item.lifetime = updated_item.lifetime
+
+        item.mod = updated_item.mod
+        item.trader = updated_item.trader
+        item.dynamic_event = updated_item.dynamic_event
+        item.count_in_hoarder = updated_item.count_in_hoarder
+        item.count_in_cargo = updated_item.count_in_cargo
+        item.count_in_map = updated_item.count_in_map
+        item.count_in_player = updated_item.count_in_player
+        self.session.commit()
 
     # get item
     def get_item(self, item_id):
