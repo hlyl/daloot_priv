@@ -204,6 +204,18 @@ class GUI(object):
         updated_item.id = self.id.get()
         updated_item.name = self.name.get()
         updated_item.nominal = self.nominal.get()
+        updated_item.min = self.min.get()
+        updated_item.lifetime = self.lifetime.get()
+        updated_item.restock = self.restock.get()
+
+        updated_item.mod = self.mod.get()
+        updated_item.trader = self.trader.get()
+        updated_item.dynamic_event = self.dynamic_event.get()
+        updated_item.count_in_hoarder = self.count_in_hoarder.get()
+        updated_item.count_in_cargo = self.count_in_cargo.get()
+        updated_item.count_in_map = self.count_in_map.get()
+        updated_item.count_in_player = self.count_in_player.get()
+
         self.database.update_item(updated_item)
         self.__populate_items()
 
