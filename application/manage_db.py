@@ -1,5 +1,5 @@
 import sqlite3
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, and_
 from sqlalchemy.orm import sessionmaker
 
 from application import Item
@@ -67,15 +67,9 @@ class Database(object):
         db_connection.close()
 
     def filter_items(self, item_type, item_sub_type=None):
-        db_connection = sqlite3.connect(self.db_name)
-        db_cursor = db_connection.cursor()
         if item_sub_type is not None:
-            sql_filter_items = "select * from items where gun_type=? AND sub_type=?"
-            db_cursor.execute(sql_filter_items, (item_type, item_sub_type))
+            items = self.session.query(Item).filter(and_(Item.item_type == item_type, Item.sub_type == item_sub_type))
         else:
-            sql_filter_items = "select * from items where gun_type=?"
-            db_cursor.execute(sql_filter_items, (item_type,))
-        items = db_cursor.fetchall()
-        db_connection.commit()
-        db_connection.close()
+            items = self.session.query(Item).filter(Item.item_type == item_type)
+        self.session.commit()
         return items
