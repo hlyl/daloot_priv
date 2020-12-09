@@ -1,13 +1,14 @@
 from tkinter import *
 
 from application import InitDatabase
+from application.manage_ini import ManageINI
 import windows
 
 
 class DBWindow(object):
     DATABASE_NAME = "dayz_items"
     INI_FILE = "app.ini"
-
+    manage_ini = ManageINI(INI_FILE)
     def __init__(self, root):
         self.window = Toplevel(root)
         self.window.grab_set()
@@ -35,13 +36,14 @@ class DBWindow(object):
         button_frame.grid(row=2, column=0, columnspan=3, pady=10)
         Button(button_frame, text="Init Database", width=12, command=self.__init_db).grid(row=0, column=1, sticky="w",
                                                                                           padx=5)
+
         # windows.center(self.window)
         self.window.wait_window()
 
     def __init_db(self):
         if self.selected_db_action.get() == "new":
             InitDatabase(self.db_name.get() + ".db")
-            print("New Database")
+        self.manage_ini.write_config(section="Database", sub_section="Database_Name", value=self.db_name.get()+".db")
 
     '''def openTypes(self):
         self.typesDir.set(windows.openFile("xml"))

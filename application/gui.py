@@ -3,14 +3,16 @@ from tkinter import ttk
 from application import Config
 from application import Database
 from application import Item
+from application import DBWindow
 from application.autocompleteCombobox import Combobox_Autocomplete
+from application.manage_ini import ManageINI
 
 
 class GUI(object):
     def __init__(self, main_container: Tk):
         #
         self.config = Config('config.xml')
-        self.database = Database("test_scripts/test_db/test_3.db")
+        self.database = Database(ManageINI.read_config("Database", "Database_Name"))
         #
         self.window = main_container
         self.window.wm_title("Loot Editor v0.98.6")
@@ -41,8 +43,7 @@ class GUI(object):
 
         # database menus builder
         database_menu = Menu(self.menu_bar, tearoff=0)
-        database_menu.add_command(label="Set Database")
-        database_menu.add_command(label="Import Database")
+        database_menu.add_command(label="Setup Database", command=self.__open_db_window)
         database_menu.add_separator()
         database_menu.add_command(label="Add items...")
 
@@ -278,6 +279,9 @@ class GUI(object):
         self.count_in_cargo.set(item.count_in_cargo)
         self.count_in_map.set(item.count_in_map)
         self.count_in_player.set(item.count_in_player)
+
+    def __open_db_window(self):
+        DBWindow(self.window)
 
 
 window = Tk()
