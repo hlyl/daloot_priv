@@ -45,6 +45,9 @@ class Database(object):
         item.restock = updated_item.restock
         item.lifetime = updated_item.lifetime
 
+        item.rarity = updated_item.rarity
+        item.item_type = updated_item.item_type
+        item.sub_type = updated_item.sub_type
         item.mod = updated_item.mod
         item.trader = updated_item.trader
         item.dynamic_event = updated_item.dynamic_event
@@ -98,6 +101,16 @@ class Database(object):
         else:
             sql_filter_items = "select * from items where item_type=?"
             db_cursor.execute(sql_filter_items, (item_type,))
+        items = db_cursor.fetchall()
+        db_connection.commit()
+        db_connection.close()
+        return items
+
+    def search_by_name(self, item_name):
+        db_connection = sqlite3.connect(self.db_name)
+        db_cursor = db_connection.cursor()
+        sql_filter_items = "select * from items where name=?"
+        db_cursor.execute(sql_filter_items, (item_name,))
         items = db_cursor.fetchall()
         db_connection.commit()
         db_connection.close()

@@ -41,13 +41,10 @@ class GUI(object):
 
         # database menus builder
         database_menu = Menu(self.menu_bar, tearoff=0)
-        database_menu.add_command(label="Connect...")
-        database_menu.add_command(label="Upgrade Database")
-        database_menu.add_command(label="Detect Subtypes")
+        database_menu.add_command(label="Set Database")
+        database_menu.add_command(label="Import Database")
         database_menu.add_separator()
         database_menu.add_command(label="Add items...")
-        database_menu.add_command(label="Create item links...")
-        database_menu.add_command(label="Trader Editor...")
 
         # mod menus builder
         mods_menu = Menu(self.menu_bar, tearoff=0)
@@ -118,13 +115,20 @@ class GUI(object):
         self.lifetimeField.grid(row=4, column=1, sticky="w")
         self.usagesListBox = Listbox(self.entryFrame, height=4, selectmode="multiple", exportselection=False, )
         self.usagesListBox.grid(row=5, column=1, pady=5, sticky="w")
+        usages = self.config.get_usages()
+        for i in usages:
+            self.usagesListBox.insert(END, i)
+
         self.tiersListBox = Listbox(self.entryFrame, height=4, selectmode="multiple", exportselection=False, )
         self.tiersListBox.grid(row=6, column=1, pady=5, sticky="w")
-        self.typeOption = OptionMenu(self.entryFrame, self.type, ('Type1', 'Type2'))
+        tires = self.config.get_tires()
+        for i in tires:
+            self.tiersListBox.insert(END, i)
+        self.typeOption = OptionMenu(self.entryFrame, self.type, *self.config.get_types()[1:])
         self.typeOption.grid(row=7, column=1, sticky="w", pady=5)
-        self.subtypeAutoComp = Combobox_Autocomplete(self.entryFrame, ["test", "yes"], highlightthickness=1)
+        self.subtypeAutoComp = Combobox_Autocomplete(self.entryFrame, self.config.get_sub_types(), highlightthickness=1)
         self.subtypeAutoComp.grid(row=8, column=1, sticky="w", pady=5)
-        self.rarityOption = OptionMenu(self.entryFrame, self.rarity, ["Rarity"])
+        self.rarityOption = OptionMenu(self.entryFrame, self.rarity, *self.config.get_rarities())
         self.rarityOption.grid(row=9, column=1, sticky="w", pady=5)
         self.modField = Entry(self.entryFrame, textvariable=self.mod)
         self.modField.grid(row=10, column=1, sticky="w", pady=5)
@@ -198,6 +202,10 @@ class GUI(object):
 
         Button(self.filterFrame, text="Filter", width=12, command=self.__filter_items).grid(columnspan=2, pady=5,
                                                                                             padx=10, sticky='nesw')
+        self.buttons_frame = Frame(self.filterFrame)
+        self.buttons_frame.grid(row=4, columnspan=2)
+        # Button(self.buttons, text="view linked items", width=12).grid(row=3)
+        Button(self.buttons_frame, text="Search by Name", width=12, command=self.__search_by_name).grid(row=4)
 
     def __update_item(self):
         updated_item = Item()
@@ -208,6 +216,9 @@ class GUI(object):
         updated_item.lifetime = self.lifetime.get()
         updated_item.restock = self.restock.get()
 
+        updated_item.rarity = self.rarity.get()
+        updated_item.item_type = self.type.get()
+        updated_item.sub_type = self.subtypeAutoComp.get()
         updated_item.mod = self.mod.get()
         updated_item.trader = self.trader.get()
         updated_item.dynamic_event = self.dynamic_event.get()
@@ -215,9 +226,9 @@ class GUI(object):
         updated_item.count_in_cargo = self.count_in_cargo.get()
         updated_item.count_in_map = self.count_in_map.get()
         updated_item.count_in_player = self.count_in_player.get()
-
         self.database.update_item(updated_item)
         self.__populate_items()
+        print(self.usagesListBox.get())
 
     def __delete_item(self):
         self.database.delete_item(self.id.get())
@@ -231,6 +242,10 @@ class GUI(object):
         for i in items:
             self.tree.insert("", "end", text=i[0], value=i[1:13])
 
+    def __search_by_name(self):
+        if self.name.get() != "":
+            self.__populate_items(self.database.search_by_name(self.name.get()))
+
     def __filter_items(self):
         item_type = self.type_for_filter.get()
         if item_type == "all":
@@ -240,9 +255,7 @@ class GUI(object):
                 sub_type = self.sub_type_combo_for_filter.get()
             else:
                 sub_type = None
-            self.__populate_items(self.database.filter_items(item_type, sub_type))
-        self.name.set("Test")
-        print(item_type)
+            self.__populate_items(self.database.search_by_name(item_type, sub_type))
 
     def __fill_entry_frame(self, event):
         tree_row = self.tree.item(self.tree.focus())
@@ -256,6 +269,10 @@ class GUI(object):
         self.restock.set(item.restock)
         self.mod.set(item.mod)
         self.trader.set(item.trader)
+
+        self.rarity.set(item.rarity)
+        self.type.set(item.item_type)
+        self.subtypeAutoComp.set_value(item.sub_type)
         self.dynamic_event.set(item.dynamic_event)
         self.count_in_hoarder.set(item.count_in_hoarder)
         self.count_in_cargo.set(item.count_in_cargo)
